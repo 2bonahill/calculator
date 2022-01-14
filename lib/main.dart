@@ -13,18 +13,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Calculator',
-      theme: ThemeData.dark(
-          // This is the theme of your application.
-          //
-          // Try running your application with "flutter run". You'll see the
-          // application has a blue toolbar. Then, without quitting the app, try
-          // changing the primarySwatch below to Colors.green and then invoke
-          // "hot reload" (press "r" in the console where you ran "flutter run",
-          // or simply save your changes to "hot reload" in a Flutter IDE).
-          // Notice that the counter didn't reset back to zero; the application
-          // is not restarted.
-          // primarySwatch: Colors.blue,
-          ),
+      theme: ThemeData.dark(),
+      debugShowCheckedModeBanner: false,
       home: const MyHomePage(title: 'Flutter Calculator'),
     );
   }
@@ -40,21 +30,24 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
   String _operandOne = "";
   String _operandTwo = "";
   String _operator = "";
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
 
   void _numPressed(String num) {
     setState(() {
       _operandTwo += num;
     });
+  }
+
+  String _formatCalcField(String s) {
+    double d = double.parse(s);
+    if (d % d.roundToDouble() == 0) {
+      // we have an int, so we don't need that x.00
+      return d.toInt().toString();
+    } else {
+      return d.toString();
+    }
   }
 
   void _opPressed(String op) {
@@ -114,16 +107,14 @@ class _MyHomePageState extends State<MyHomePage> {
           double operand2 = double.parse(_operandTwo);
           _operandOne = _operandOne + " " + _operator + " " + _operandTwo;
           if (_operator == "/") {
-            _operandOne = _operandOne + " " + _operator + " " + _operandTwo;
-            _operandTwo = (operand1 / operand2).toString();
+            _operandTwo = _formatCalcField((operand1 / operand2).toString());
           } else if (_operator == "*") {
-            _operandTwo = (operand1 * operand2).toString();
+            _operandTwo = _formatCalcField((operand1 * operand2).toString());
           } else if (_operator == "-") {
-            _operandTwo = (operand1 - operand2).toString();
+            _operandTwo = _formatCalcField((operand1 - operand2).toString());
           } else if (_operator == "+") {
-            _operandTwo = (operand1 + operand2).toString();
+            _operandTwo = _formatCalcField(((operand1 + operand2).toString()));
           }
-
           _operator = "=";
         });
         break;
@@ -134,14 +125,10 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
       body: SafeArea(
         child: Center(
-          // Center is a layout widget. It takes a single child and positions it
-          // in the middle of the parent.
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
@@ -149,7 +136,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(20.0),
+                    padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
                     child: Text(
                       _operandOne,
                       style: const TextStyle(
@@ -163,11 +150,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(10.0),
+                    padding: const EdgeInsets.fromLTRB(0, 0, 40, 0),
                     child: Text(
                       _operator,
                       style: const TextStyle(
-                        fontSize: 20,
+                        fontSize: 50,
                       ),
                     ),
                   ),
@@ -177,12 +164,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(20.0),
+                    padding: const EdgeInsets.fromLTRB(0, 0, 20, 20),
                     child: Text(
                       _operandTwo,
                       style: const TextStyle(
-                        fontSize: 60,
-                      ),
+                          fontSize: 60, overflow: TextOverflow.fade),
                     ),
                   ),
                 ],
